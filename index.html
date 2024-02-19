@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>PeRFlow: Accelerating Diffusion models via Piecewise Rectified Flow</title>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <script type="text/javascript" src="./static/slick/slick.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="./static/slick/slick.css"/>
+  <link rel="stylesheet" type="text/css" href="./static/slick/slick-theme.css"/>
+  
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+
+
+
+<body>
+
+<!-- <section class="hero"> -->
+<section class="section">
+
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+      <div class="container has-text-centered">
+        <!-- <h1 class="title is-1 publication-title">PeRFlow<img src="assets/rocket-icon-png-21.png" width="50"></h1> -->
+        <h2 class="title is-3 publication-title"><img src="assets/rocket-icon-png-21.png" width="40">PeRFlow: Accelerating Diffusion models via Piecewise Rectified Flow</h2>
+        <div class="is-size-5 publication-authors">
+          <div class="author-block"><a href="https://hanshuyan.github.io/">Hanshu Yan</a><sup>1</sup></div>
+          <div class="author-block"><a href="https://gnobitab.github.io/">Xingchao Liu</a><sup>2</sup></div>
+          <div class="author-block"><a href="https://scholar.google.com/citations?user=nrOvfb4AAAAJ">Jiachun Pan</a><sup>3</sup></div>
+          <div class="author-block"><a href="https://scholar.google.com.sg/citations?user=8gm-CYYAAAAJ">Jun Hao Liew</a><sup>1</sup></div>
+          <div class="author-block"><a href="https://www.cs.utexas.edu/~lqiang/">Qiang Liu</a><sup>2</sup></div>
+          <div class="author-block"><a href="https://sites.google.com/site/jshfeng/home">Jiashi Feng</a><sup>1</sup></div>
+        </div>
+
+        <div class="is-size-5 publication-authors">
+          <span class="author-block"><sup>1</sup>ByteDance</span>&nbsp&nbsp
+          <span class="author-block"><sup>2</sup>UT Austin</span>&nbsp&nbsp
+          <span class="author-block"><sup>3</sup>NUS</span>
+          <!-- <br>
+          <span class="author-block">&nbsp&nbsp<sup>*</sup>Equal Contribution</span>
+          <span class="author-block">&nbsp&nbsp<sup>+</sup>Project Lead</span> -->
+        </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+<!--               <span class="link-block">
+                  <a href=""
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                        <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>Technical Report</span>
+                  </a>
+              </span> -->
+              <span class="link-block">
+                <a href="https://github.com/magic-research/piecewise-rectified-flow"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://huggingface.co/hansyan" 
+                class="external-link button is-normal is-rounded is-dark">
+                🤗 Model
+                </a>
+              </span>
+          </div>
+        </div>
+
+      </div>
+      </div>
+    </div>
+  </div>
+<!-- </section>
+
+
+<section class="section"> -->
+  <br><br>
+  <div class="container is-fullhd">
+    <h2 class="title is-2, columns is-centered">Gallery</h2>
+    <hr>
+    <center><h2 class="title is-4">8-step inference</h2></center>
+    <br>
+
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-3 card" id="img1">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_8_step/RV51/txt2_cfg7-5_seed0.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_8_step/RV51/txt2_cfg7-5_seed0.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img2">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_8_step/architecture/txt2_cfg7-5_seed0.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_8_step/architecture/txt2_cfg7-5_seed0.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img3">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_8_step/RV51/txt7_cfg7-5_seed1.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_8_step/RV51/txt7_cfg7-5_seed1.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img4">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_8_step/RV51/txt11_cfg7-5_seed6.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_8_step/RV51/txt11_cfg7-5_seed6.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img5">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_8_step/dreamshaper/txt12_cfg7-5_seed4.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_8_step/dreamshaper/txt12_cfg7-5_seed4.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img6">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_8_step/RV51/txt4_cfg7-5_seed0.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_8_step/RV51/txt4_cfg7-5_seed0.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img7">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_8_step/dreamshaper/txt3_cfg7-5_seed2.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_8_step/dreamshaper/txt3_cfg7-5_seed2.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img8">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_8_step/dreamshaper/txt8_cfg7-5_seed1.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_8_step/dreamshaper/txt8_cfg7-5_seed1.png" alt="Description of the image">
+        </div>
+      </div>
+    </div>
+    <!-- <hr> -->
+    <br>
+
+    <center><h2 class="title is-4">4-step inference</h2></center>
+    <br>
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-3 card" id="img9">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_4_step/dreamshaper/txt4_cfg4-5_seed0.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_4_step/dreamshaper/txt4_cfg4-5_seed0.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img10">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_4_step/dreamshaper/txt2_cfg4-5_seed0.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_4_step/dreamshaper/txt2_cfg4-5_seed0.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img11">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_4_step/dreamshaper/txt11_cfg4-5_seed7.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_4_step/dreamshaper/txt11_cfg4-5_seed7.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img12">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_4_step/landscape/txt1_cfg4-5_seed6.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_4_step/landscape/txt1_cfg4-5_seed6.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img13">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_4_step/RV51/txt11_cfg4-5_seed0.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_4_step/RV51/txt11_cfg4-5_seed0.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img14">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_4_step/disney/txt1_cfg4-5_seed5.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_4_step/disney/txt1_cfg4-5_seed5.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img15">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_4_step/architecture/txt4_cfg4-5_seed6.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_4_step/architecture/txt4_cfg4-5_seed6.png" alt="Description of the image">
+        </div>
+      </div>
+
+
+      <div class="column is-3 card" id="img16">
+        <div class="card-face card-face-front">
+          <img src="assets/gallery_4_step/RV51/txt1_cfg4-5_seed4.png" alt="Description of the image">
+        </div>
+        <div class="card-face card-face-back">
+          <img src="assets/gallery_4_step/RV51/txt1_cfg4-5_seed4.png" alt="Description of the image">
+        </div>
+      </div>
+    </div>
+    
+
+    <br><br><br><br>
+    <h2 class="title is-2, columns is-centered">Features</h2>
+    <hr>
+    <br>
+    PeRFlow trains flow models for fast sampling. The flow models can be initilized from pretrained diffusion models, such as Stable Diffusion (SD). The obtained weights of PeRFlow serve as a general speedup module which works compatibly with various fine-tuned stylized SD models and SD-based generation/editing pipelines. In specifc, \(\Delta W\) are computed by the flow model's weights minus the pretrained ones. We can fuse the PeFlow-\(\Delta W\) into various SD pipelines for (conditional) image generation/editing with just few-step inference.
+
+    
+
+
+
+    <br><br><br>
+    <center><h2 class="title is-3">Compatibility to SD pipelines</h2></center>
+    <br>
+
+    <br><br>
+    <h2 class="title is-4">ControlNet - Tile</h2>
+    Here, we show the collaboration of PeRFlow and ControlNet-Tile for image enhancement. Given a low-res input (64x64), we can generate a high-res (1024x1024) image with rich details.
+    <br><br>
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-4">
+        <center>Low-resolution input</center>
+        <img id="tile1" src="assets/feature_ctrl_tile/ctrl7.png" alt="Description of the image">
+        <button id='leftButton' class='circle-button'><i class="fas fa-play fa-flip-horizontal"></i></button>
+      </div>
+      <div class="column is-4">
+        <center>PeRFlow</center>
+        <img id="tile3" src="assets/feature_ctrl_tile/perflow/ctrl7_cfg7-5.png" alt="Description of the image">
+      </div>
+      <div class="column is-4">
+        <center>LCM</center>
+        <img id="tile2" src="assets/feature_ctrl_tile/lcm/ctrl7_cfg1-5.png" alt="Description of the image">
+        <button id='rightButton' class='circle-button'><i class="fas fa-play"></i></button>
+      </div>
+    </div>
+
+    <br><br>
+    <h2 class="title is-4">ControlNet - Depth / Edge / Pose</h2>
+    Plug PeRFlow-\(\Delta W\) into other ControlNet pipelines.
+    <br><br>
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-2">
+        <center>Condition</center>
+        <img src="assets/feature_ctrl_xxx/midas/ctrl2.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Sample 1</center>
+        <img src="assets/feature_ctrl_xxx/midas/ctrl2_cfg7-5_prompt1.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Sample 2</center>
+        <img src="assets/feature_ctrl_xxx/midas/ctrl2_cfg7-5_prompt2.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Condition</center>
+        <img src="assets/feature_ctrl_xxx/midas/ctrl4.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Sample 1</center>
+        <img src="assets/feature_ctrl_xxx/midas/ctrl4_cfg7-5_prompt2.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Sample 2</center>
+        <img src="assets/feature_ctrl_xxx/midas/ctrl4_cfg7-5_prompt3.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/canny/ctrl1.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/canny/ctrl1_cfg7-5_prompt1.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/canny/ctrl1_cfg7-5_prompt2.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/canny/ctrl3.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/canny/ctrl3_cfg7-5_prompt1.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/canny/ctrl3_cfg7-5_prompt2.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/openpose/ctrl1.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/openpose/ctrl1_cfg7-5_prompt0.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/openpose/ctrl1_cfg7-5_prompt2.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/openpose/ctrl3.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/openpose/ctrl3_cfg7-5_prompt1.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img src="assets/feature_ctrl_xxx/openpose/ctrl3_cfg7-5_prompt3.png" alt="Description of the image">
+      </div>
+    </div>
+
+
+    <br><br>
+    <h2 class="title is-4">IP-Adapter FaceID</h2>
+    <br>
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-2">
+        <center>Face ID</center>
+        <img src="assets/feature_ip_adapter-faceid/ctrl1.jpg" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Sample 1</center>
+        <img src="assets/feature_ip_adapter-faceid/ctrl1_prompt1.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Sample 2</center>
+        <img src="assets/feature_ip_adapter-faceid/ctrl1_prompt2.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Face ID</center>
+        <img src="assets/feature_ip_adapter-faceid/ctrl2.jpg" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Sample 1</center>
+        <img src="assets/feature_ip_adapter-faceid/ctrl2_prompt4.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <center>Sample 2</center>
+        <img src="assets/feature_ip_adapter-faceid/ctrl2_prompt5.png" alt="Description of the image">
+      </div>
+    </div>
+
+    <br><br>
+    <h2 class="title is-4">Prompt-to-prompt</h2>
+    <br>
+
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-3">
+        <img src="assets/feature_attn/p2p/ptp_image_cat-sitting_8965.png" alt="Description of the image">
+        <h3 class="image-prompt">a cat &rarr; a dog</h3>
+      </div>
+      <div class="column is-3">
+        <img src="assets/feature_attn/p2p/ptp_image_tiger-eating_10903.png" alt="Description of the image">
+        <h3 class="image-prompt">eating steak &rarr; eating rice</h3>
+      </div>
+      <div class="column is-3">
+        <img src="assets/feature_attn/p2p/ptp_image_dog_6556.png" alt="Description of the image">
+        <h3 class="image-prompt">a dog &rarr; a bull</h3>
+      </div>
+      <div class="column is-3">
+        <img src="assets/feature_attn/p2p/ptp_image_woman-crown_10903.png" alt="Description of the image">
+        <h3 class="image-prompt">with crown &rarr; with hat</h3>
+      </div>
+    </div>
+
+
+    <br>
+    <h2 class="title is-4">Img2Img</h2>
+    <br>
+
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-2">
+        <div class="image-container">
+          <button id='leftButton_img2img' class='circle-button'><i class="fas fa-play fa-flip-horizontal"></i></button>
+          <img id="img2img1" src="assets/feature_img2img/img1.png" alt="Description of the image">
+        </div>
+      </div>
+      <div class="column is-2">
+        <img id="img2img2" src="assets/feature_img2img/img1_cfg7-5_prompt0.png" alt="Description of the image">
+        <h3 id="img2img2_text" class="image-prompt"></h3>
+      </div>
+      <div class="column is-2">
+        <img id="img2img3" src="assets/feature_img2img/img1_cfg8-0_prompt1.png" alt="Description of the image">
+        <h3 id="img2img3_text" class="image-prompt"></h3>
+      </div>
+      <div class="column is-2">
+        <img id="img2img4" src="assets/feature_img2img/img2.png" alt="Description of the image">
+      </div>
+      <div class="column is-2">
+        <img id="img2img5" src="assets/feature_img2img/img2_cfg7-5_prompt0.png" alt="Description of the image">
+        <h3 id="img2img5_text" class="image-prompt"></h3>
+      </div>
+      <div class="column is-2">
+        <div class="image-container">
+          <img id="img2img6" src="assets/feature_img2img/img2_cfg7-5_prompt1.png" alt="Description of the image">
+          <h3 id="img2img6_text" class="image-prompt"></h3>
+          <button id='rightButton_img2img' class='circle-button'><i class="fas fa-play"></i></button>
+        </div>
+      </div>
+    </div>
+
+
+    <br><br>
+    <center><h2 class="title is-3">Comparison with LCM</h2></center>
+    <br><br>
+    <!-- <center><h2 class="title is-5">Better compatibility with finetuned SD models</h2></center> -->
+    <h2 class="title is-4">Better compatibility with finetuned SD models</h2>
+    <br>
+    PeRFlow shows a smaller gap to the oracle in terms of image quality, e.g., color-style and layout. It preserves the aesthetic effect of finetuned stylized models (vivid, proper brightness and contrast). PeRFlow also supports CFG and negative prompts. One can use the well-craft negative and positive prompts provided in various finetued stylized models to generate astonishing images.
+
+    <br><br>
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-4">
+        <div class="image-container">
+          <center>Oracle*</center>
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="image-container">
+          <center>PeRFlow</center>
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="image-container">
+          <center>LCM</center>
+        </div>
+      </div>
+    </div>
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-12">
+        <div class="image-container">
+          <button id='leftButton_better_compat' class='circle-button'><i class="fas fa-play fa-flip-horizontal"></i></button>
+          <img id="better_compat" src="assets/feature_better_compatibility/feature_better_compat1.png" alt="Description of the image">
+          <button id='rightButton_better_compat' class='circle-button'><i class="fas fa-play"></i></button>
+          <h3 id="better_compat_text" class="image-title"></h3>
+        </div>
+      </div>
+    </div>
+    <i>*We regard the 25-step sampling results of the pretrained SD-v1.5 as oracle.</i>
+
+
+    <br><br><br>
+    <h2 class="title is-4">Better sampling diversity</h2>
+    <p>PeRFlow generates more diverse samples in terms of color and layout</p>
+
+    <br>
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-6 padded">
+        <div class="image-container">
+          <center>PeRFlow</center>
+          <button id='leftButton_better_diversity' class='circle-button'><i class="fas fa-play fa-flip-horizontal"></i></button>
+          <img id="better_diversity1" src="assets/feature_better_diversity/feature_diversity1_perflow.png" alt="Description of the image">
+        </div>
+      </div>
+      <div class="column is-6 padded">
+        <div class="image-container">
+          <center>LCM</center>
+          <img id="better_diversity2" src="assets/feature_better_diversity/feature_diversity1_lcm.png" alt="Description of the image">
+          <button id='rightButton_better_diversity' class='circle-button'><i class="fas fa-play"></i></button>
+        </div>    
+      </div>
+    </div>
+
+
+    <br><br>
+    <h2 class="title is-4">Consistency among results by various inference steps</h2>
+    Increasing sampling steps will improve the image quality. Given a random seed, PeRFlow generates results sharing the similar appearance, so that users can preview many candidates via 4-step inference, then choose few ones of interest for final high-quality generation. In contrast, the results of LCM via different inference steps may look very different.
+    <br><br>
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-5">
+        <center>PeRFlow 4--8--16 step</center>
+        <img src="assets/feature_progressive/feature_progressive_perflow.png" alt="Description of the image">
+      </div>
+      <div class="column is-5 is-offset-1">
+        <center>LCM 4--8--16 step</center>
+        <img src="assets/feature_progressive/feature_progressive_lcm.png" alt="Description of the image">
+      </div>
+    </div>
+
+
+
+
+    <br><br>
+    <hr>
+    <center><h2 class="title is-2">Method</h2></center>
+    <br><br>
+    Diffusion models are powerful generative models that exhibit impressive performances across different modality generation including image and video. However, existing diffusion models are slow in inference and usually require many steps to generate content. We propose an efficient flow model, termed piecewise rectified flow (PeRFlow), for diffusion model speed-up. 
+    <!-- PeRFlow divides the sampling trajectories of the pretrained diffusion model into multiple segments and approximate each segment with rectified flows.  -->
+    The training of PeRFlow converges fast, when accelerating Stable-Diffusion, we can obtain a four-step generative model within 4k training iterations. PeRFlow can work compatibly with various finetuned version of the pretrained diffusion model. For example, you can load various stylized dreambooth LORAs into PeRFlow for fast generation. PerFlow also can be directly used in other conditional generation pipelines, such as ControlNet and IP-Adaptor.
+
+    <br><br>
+    <div class="columns is-multiline is-mobile is-centered">
+      <div class="column is-6">
+        <!-- <center>Piecewisely straightening sampling trajectories via PeRFlow</center> -->
+        <img src="assets/perflow.png" alt="Description of the image" style="border-radius: 20px;">
+      </div>
+    </div>
+
+
+    As shwon in the Figure above, the pretrained diffusion model maps random noise distribution \(\pi_0\), to certain data distribution \(\pi_1\). The evolution trajectories are too complex for few-step sampling. PeRFlow divides the sampling trajecories into multiple segments (two as an example here), and straightens each part via ReFlow operation. A well-trained PeRFlow can generate high-quality images in just few steps. We train a PeRFlow model on LAION-aesthetic-v2 data to accelerate SD-v1.5. We present FID results of PeRFlow in the following table.
+
+    <br><br>
+    <div class="columns is-multiline is-mobile is-centered">
+        <table class="table is-striped is-hoverable rounded-table" style="font-size:14px;">
+          <tr>
+            <th style="text-align:center;"></th>
+            <th colspan="2" style="text-align:center;">LAION5B-30k</th>
+            <th colspan="2" style="text-align:center;">SD-v1.5</th>
+            <th colspan="2" style="text-align:center;">COCO2014-30k</th>
+        </tr>
+        <tr>
+            <td style="text-align:center;"><strong>FID</strong></td>
+            <td style="text-align:center;"><strong>4-step</strong></td>
+            <td style="text-align:center;"><strong>8-step</strong></td>
+            <td style="text-align:center;"><strong>4-step</strong></td>
+            <td style="text-align:center;"><strong>8-step</strong></td>
+            <td style="text-align:center;"><strong>4-step</strong></td>
+            <td style="text-align:center;"><strong>8-step</strong></td>
+        </tr>
+        <tr>
+            <td style="text-align:center;">PeRFlow</td>
+            <td style="text-align:center;">9.74</td>
+            <td style="text-align:center;">8.62</td>
+            <td style="text-align:center;">9.46</td>
+            <td style="text-align:center;">5.05</td>
+            <td style="text-align:center;">11.31</td>
+            <td style="text-align:center;">14.16</td>
+        </tr>
+        <tr>
+            <td style="text-align:center;">LCM</td>
+            <td style="text-align:center;">15.38</td>
+            <td style="text-align:center;">19.21</td>
+            <td style="text-align:center;">15.63</td>
+            <td style="text-align:center;">21.19</td>
+            <td style="text-align:center;">23.49</td>
+            <td style="text-align:center;">29.63</td>
+        </tr>
+        </table>
+    </div>
+
+    <!-- <p style="width: 70%; text-align: left;"> -->
+    <br>
+    We compute the FID values with respect to three datasets, including a LAION subset, a set of data generated by SD-v1.5, and COCO2014. Both PeRFlow and LCM are trained on LAION-aesthetic-v2 to accelerate SD-v1.5, thus we compare the FID results on a LAION subset and SD-v1.5's generation. We also compute the FID results w.r.t. a public realistic image dataset, COCO2014. Numerical results show the superiority of PeRFlow in few-step sampling.
+    <!-- </p> -->
+
+  </div>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container content is-fullhd">
+    <h2 class="title" style="color: rgb(255, 255, 255);">BibTeX</h2>
+    <pre><code>@article{yan2024perflow,
+    title   = {PeRFlow: Accelerating Diffusion models via Piecewise Rectified Flow},
+    author  = {Yan, Hanshu and Liu, Xingchao and Pan, Jiachun and Liew, Jun Hao and Liu, Qiang and Feng, Jiashi},
+    year    = {2024}
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="columns is-centered" style="color: rgb(0,0,0)">
+    <div class="column is-12">
+      <div class="content">
+        <p>
+            PeRFlow is implemented based on 
+            <a href="https://github.com/huggingface/">Diffusers and Accelerate</a> libraries. Several high-quality finetuned versions of 
+            <a href="https://huggingface.co/runwayml/stable-diffusion-v1-5">Stable Diffusion</a> are used for model evaluatoin, 
+            including <a href="https://civitai.com/user/Lykon">DreamShaper</a>, 
+            <a href="https://civitai.com/user/SG_161222/models">RealisticVision</a>, 
+            <a href="https://civitai.com/user/Celsia/models">LandscapeRealistic</a>,
+            <a href="https://civitai.com/user/Hoang_StablediffusionLife/models">ArchitectureExterior</a>, 
+            <a href="https://civitai.com/user/PromptSharingSamaritan/models">DisneyCartoon</a>. The source code of this webpage is based on the <a href="https://github.com/nerfies/nerfies.github.io/"> Nerfies</a> project webpage.
+        </p>
+        <p>In addition, Xingchao wishes to express his genuine gratitude to Nat Friedman and the Andromeda cluster for providing free GPU grants during this research.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- <script type="text/javascript" src="./static/slick/slick.min.js"></script> -->
+
+<script>
+// gallery
+const imagePools_8steps = {
+  'img1': {pool: ['assets/gallery_8_step/disney/txt4_cfg7-5_seed0.png', 'assets/gallery_8_step/RV51/txt9_cfg7-5_seed7.png', 'assets/gallery_8_step/RV51/txt2_cfg7-5_seed0.png'], index: 0},
+  'img2': {pool: ['assets/gallery_8_step/RV51/txt1_cfg7-5_seed7.png', 'assets/gallery_8_step/dreamshaper/txt5_cfg7-5_seed5.png', 'assets/gallery_8_step/architecture/txt2_cfg7-5_seed0.png'], index: 0},
+  'img3': {pool: ['assets/gallery_8_step/landscape/txt3_cfg7-5_seed4.png', 'assets/gallery_8_step/dreamshaper/txt6_cfg7-5_seed0.png', 'assets/gallery_8_step/RV51/txt7_cfg7-5_seed1.png'], index: 0},
+  'img4': {pool: ['assets/gallery_8_step/disney/txt2_cfg7-5_seed3.png', 'assets/gallery_8_step/RV51/txt8_cfg7-5_seed2.png', 'assets/gallery_8_step/RV51/txt11_cfg7-5_seed6.png'], index: 0},
+  'img5': {pool: ['assets/gallery_8_step/dreamshaper/txt9_cfg7-5_seed3.png', 'assets/gallery_8_step/dreamshaper/txt10_cfg7-5_seed7.png', 'assets/gallery_8_step/dreamshaper/txt12_cfg7-5_seed4.png'], index: 0},
+  'img6': {pool: ['assets/gallery_8_step/dreamshaper/txt1_cfg7-5_seed2.png', 'assets/gallery_8_step/RV51/txt5_cfg7-5_seed3.png', 'assets/gallery_8_step/RV51/txt4_cfg7-5_seed0.png'], index: 0},
+  'img7': {pool: ['assets/gallery_8_step/architecture/txt3_cfg7-5_seed4.png', 'assets/gallery_8_step/dreamshaper/txt7_cfg7-5_seed7.png', 'assets/gallery_8_step/dreamshaper/txt3_cfg7-5_seed2.png'], index: 0},
+  'img8': {pool: ['assets/gallery_8_step/dreamshaper/txt11_cfg7-5_seed1.png', 'assets/gallery_8_step/landscape/txt6_cfg7-5_seed6.png', 'assets/gallery_8_step/dreamshaper/txt8_cfg7-5_seed1.png'], index: 0},  
+}
+
+const imagePools_4steps = {
+  'img9' : {pool: ['assets/gallery_4_step/RV51/txt7_cfg4-5_seed0.png', 'assets/gallery_4_step/landscape/txt5_cfg4-5_seed4.png', 'assets/gallery_4_step/dreamshaper/txt4_cfg4-5_seed0.png'], index: 0},
+  'img10': {pool: ['assets/gallery_4_step/dreamshaper/txt7_cfg4-5_seed6.png', 'assets/gallery_4_step/dreamshaper/txt8_cfg4-5_seed7.png', 'assets/gallery_4_step/dreamshaper/txt2_cfg4-5_seed0.png'], index: 0},
+  'img11': {pool: ['assets/gallery_4_step/RV51/txt9_cfg4-5_seed1.png', 'assets/gallery_4_step/RV51/txt8_cfg4-5_seed4.png', 'assets/gallery_4_step/dreamshaper/txt11_cfg4-5_seed7.png'], index: 0},
+  'img12': {pool: ['assets/gallery_4_step/disney/txt3_cfg5-0_seed1.png', 'assets/gallery_4_step/dreamshaper/txt9_cfg4-5_seed6.png', 'assets/gallery_4_step/landscape/txt1_cfg4-5_seed6.png'], index: 0},
+  'img13': {pool: ['assets/gallery_4_step/dreamshaper/txt6_cfg4-5_seed5.png', 'assets/gallery_4_step/RV51/txt4_cfg4-5_seed0.png', 'assets/gallery_4_step/RV51/txt11_cfg4-5_seed0.png'], index: 0},
+  'img14': {pool: ['assets/gallery_4_step/dreamshaper/txt10_cfg4-5_seed2.png', 'assets/gallery_4_step/RV51/txt2_cfg4-5_seed7.png', 'assets/gallery_4_step/disney/txt1_cfg4-5_seed5.png'], index: 0},
+  'img15': {pool: ['assets/gallery_4_step/architecture/txt1_cfg4-5_seed3.png', 'assets/gallery_4_step/RV51/txt5_cfg4-5_seed1.png', 'assets/gallery_4_step/architecture/txt4_cfg4-5_seed6.png'], index: 0},
+  'img16': {pool: ['assets/gallery_4_step/dreamshaper/txt12_cfg4-5_seed5.png', 'assets/gallery_4_step/dreamshaper/txt5_cfg4-5_seed0.png', 'assets/gallery_4_step/RV51/txt1_cfg4-5_seed4.png'], index: 0},
+}
+
+let ids_8steps = Object.keys(imagePools_8steps);
+let ids_4steps = Object.keys(imagePools_4steps);
+
+// Shuffle ids array
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+shuffleArray(ids_8steps);
+shuffleArray(ids_4steps);
+
+let currentIndex_8steps = 0;
+let currentIndex_4steps = 0;
+
+function flipCard(imagePools, id) {
+    const cardElem = document.getElementById(id);
+    const poolData = imagePools[id];
+    const newImageUrl = poolData.pool[poolData.index];
+    const backFace = cardElem.querySelector('.card-face-back img');
+    const frontFace = cardElem.querySelector('.card-face-front img');
+
+    backFace.src = newImageUrl;
+    poolData.index = (poolData.index + 1) % poolData.pool.length;
+
+    // Trigger the flip
+    cardElem.classList.add('flipped');
+    frontFace.src = newImageUrl;
+
+    // Once flip is over, remove flipped class for the next flip
+    setTimeout(() => {
+        cardElem.classList.remove('flipped');
+    }, 600); // Match the time with transition time in CSS
+}
+
+setInterval(() => {
+    let currentId_8steps = ids_8steps[currentIndex_8steps];
+    flipCard(imagePools_8steps, currentId_8steps);
+    currentIndex_8steps = (currentIndex_8steps + 1) % ids_8steps.length;
+
+    let currentId_4steps = ids_4steps[currentIndex_4steps];
+    flipCard(imagePools_4steps, currentId_4steps);
+    currentIndex_4steps = (currentIndex_4steps + 1) % ids_4steps.length;
+
+}, 2000);
+</script>
+
+<script>
+  // controlnet-tile
+  let imgs1 = ["assets/feature_ctrl_tile/ctrl7.png", "assets/feature_ctrl_tile/ctrl6.png", "assets/feature_ctrl_tile/ctrl3.png", "assets/feature_ctrl_tile/ctrl1.png"];
+  let imgs2 = ["assets/feature_ctrl_tile/lcm/ctrl7_cfg1-5.png", "assets/feature_ctrl_tile/lcm/ctrl6_cfg1-5.png", "assets/feature_ctrl_tile/lcm/ctrl3_cfg1-5.png", "assets/feature_ctrl_tile/lcm/ctrl1_cfg1-5.png"];
+  let imgs3 = ["assets/feature_ctrl_tile/perflow/ctrl7_cfg7-5.png", "assets/feature_ctrl_tile/perflow/ctrl6_cfg7-5.png", "assets/feature_ctrl_tile/perflow/ctrl3_cfg7-5.png", "assets/feature_ctrl_tile/perflow/ctrl1_cfg7-5.png"];
+
+  let currentIndex = 0;
+
+  let leftButton = document.getElementById('leftButton');
+  let rightButton = document.getElementById('rightButton');
+
+  leftButton.addEventListener('click', function() {
+      currentIndex = (currentIndex + imgs1.length - 1) % imgs1.length;
+      updateImages();
+  });
+
+  rightButton.addEventListener('click', function() {
+      currentIndex = (currentIndex + 1) % imgs1.length; 
+      updateImages();
+  });
+
+  function updateImages() {
+      document.getElementById('tile1').src = imgs1[currentIndex];
+      document.getElementById('tile2').src = imgs2[currentIndex];
+      document.getElementById('tile3').src = imgs3[currentIndex];
+  }
+
+  updateImages();
+
+  // img2img
+  let imgs1_img2img = ["assets/feature_img2img/img1.png", "assets/feature_img2img/img3.png"];
+  let imgs2_img2img = ["assets/feature_img2img/img1_cfg7-5_prompt0.png", "assets/feature_img2img/img3_cfg7-0_prompt1.png"];
+  let imgs3_img2img = ["assets/feature_img2img/img1_cfg8-0_prompt1.png", "assets/feature_img2img/img3_cfg9-0_prompt0.png"];
+  let imgs4_img2img = ["assets/feature_img2img/img2.png", "assets/feature_img2img/img5.png"];
+  let imgs5_img2img = ["assets/feature_img2img/img2_cfg7-5_prompt0.png", "assets/feature_img2img/img6_cfg8-0_prompt1.png"];
+  let imgs6_img2img = ["assets/feature_img2img/img2_cfg7-5_prompt1.png", "assets/feature_img2img/img5_cfg8-0_prompt0.png"];
+
+  let img2img2_text = ["A boy wearing sunglasses", "A donut with crumbs of chocolate cookies"]
+  let img2img3_text = ["A girl smiling", "An electrical fan"]
+  let img2img5_text = ["A dragon sitting on the ground", "An audio speaker"]
+  let img2img6_text = ["A dog sitting on the ground", "An electrical lamp"]
+
+  let currentIndex_img2img = 0;
+
+  let leftButton_img2img = document.getElementById('leftButton_img2img');
+  let rightButton_img2img = document.getElementById('rightButton_img2img');
+
+  leftButton_img2img.addEventListener('click', function() {
+      currentIndex_img2img = (currentIndex_img2img + imgs1_img2img.length - 1) % imgs1_img2img.length;
+      updateImages_img2img();
+  });
+
+  rightButton_img2img.addEventListener('click', function() {
+      currentIndex_img2img = (currentIndex_img2img + 1) % imgs1_img2img.length; 
+      updateImages_img2img();
+  });
+
+  function updateImages_img2img() {
+      document.getElementById('img2img1').src = imgs1_img2img[currentIndex_img2img];
+      document.getElementById('img2img2').src = imgs2_img2img[currentIndex_img2img];
+      document.getElementById('img2img3').src = imgs3_img2img[currentIndex_img2img];
+      document.getElementById('img2img4').src = imgs4_img2img[currentIndex_img2img];
+      document.getElementById('img2img5').src = imgs5_img2img[currentIndex_img2img];
+      document.getElementById('img2img6').src = imgs6_img2img[currentIndex_img2img];
+
+      document.getElementById('img2img2_text').textContent = img2img2_text[currentIndex_img2img];
+      document.getElementById('img2img3_text').textContent = img2img3_text[currentIndex_img2img];
+      document.getElementById('img2img5_text').textContent = img2img5_text[currentIndex_img2img];
+      document.getElementById('img2img6_text').textContent = img2img6_text[currentIndex_img2img];
+  }
+
+  updateImages_img2img();
+
+  // better compatibility
+  let imgs1_better_compat = ["assets/feature_better_compatibility/feature_better_compat1.png", "assets/feature_better_compatibility/feature_better_compat2.png", "assets/feature_better_compatibility/feature_better_compat3.png", "assets/feature_better_compatibility/feature_better_compat4.png", "assets/feature_better_compatibility/feature_better_compat5.png"];
+  let better_compat_text = ["architectureExterior_v40", "disneyPixarCartoon_v10", "DreamShaper_8", "landscapeRealistic_v11", "realisticVision_v51"];
+
+  let currentIndex_better_compat = 0;
+
+  let leftButton_better_compat = document.getElementById('leftButton_better_compat');
+  let rightButton_better_compat = document.getElementById('rightButton_better_compat');
+
+  leftButton_better_compat.addEventListener('click', function() {
+      currentIndex_better_compat = (currentIndex_better_compat + imgs1_better_compat.length - 1) % imgs1_better_compat.length;
+      updateImages_better_compat();
+  });
+
+  rightButton_better_compat.addEventListener('click', function() {
+      currentIndex_better_compat = (currentIndex_better_compat + 1) % imgs1_better_compat.length; 
+      updateImages_better_compat();
+  });
+
+  function updateImages_better_compat() {
+      document.getElementById('better_compat').src = imgs1_better_compat[currentIndex_better_compat];
+      document.getElementById('better_compat_text').textContent = better_compat_text[currentIndex_better_compat];
+  }
+
+  updateImages_better_compat();
+
+  // better_diversity
+  let imgs1_better_diversity = ["assets/feature_better_diversity/feature_diversity1_perflow.png", "assets/feature_better_diversity/feature_diversity2_perflow.png"];
+  let imgs2_better_diversity = ["assets/feature_better_diversity/feature_diversity1_lcm.png", "assets/feature_better_diversity/feature_diversity2_lcm.png"];
+
+  let currentIndex_better_diversity = 0;
+
+  let leftButton_better_diversity = document.getElementById('leftButton_better_diversity');
+  let rightButton_better_diversity = document.getElementById('rightButton_better_diversity');
+
+  leftButton_better_diversity.addEventListener('click', function() {
+      currentIndex_better_diversity = (currentIndex_better_diversity + imgs1_better_diversity.length - 1) % imgs1_better_diversity.length;
+      updateImages_better_diversity();
+  });
+
+  rightButton_better_diversity.addEventListener('click', function() {
+      currentIndex_better_diversity = (currentIndex_better_diversity + 1) % imgs1_better_diversity.length; 
+      updateImages_better_diversity();
+  });
+
+  function updateImages_better_diversity() {
+      document.getElementById('better_diversity1').src = imgs1_better_diversity[currentIndex_better_diversity];
+      document.getElementById('better_diversity2').src = imgs2_better_diversity[currentIndex_better_diversity];
+  }
+
+  updateImages_better_diversity();
+
+</script>
+
+</body>
+
+
+
+
+</html>
+
+
+<style>
+  .videoContainer {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .videoContainer video.mainVideo {
+    width: 100%;
+    height: auto;
+  }
+
+  .videoContainer video.overlayVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%; /* Adjust this value to make video2 smaller or larger */
+  }
+</style>
+
+
+<style>
+  .rounded-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 10px; /* Adjust this value for different corner radii */
+  }
+  
+  .rounded-table tr:first-child th:first-child {
+      border-top-left-radius: 10px; /* Same radius as .rounded-table border-radius */
+  }
+  
+  .rounded-table tr:first-child th:last-child {
+      border-top-right-radius: 10px; /* Same radius as .rounded-table border-radius */
+  }
+  
+  .rounded-table tr:last-child td:first-child {
+      border-bottom-left-radius: 10px; /* Same radius as .rounded-table border-radius */
+  }
+  
+  .rounded-table tr:last-child td:last-child {
+      border-bottom-right-radius: 10px; /* Same radius as .rounded-table border-radius */
+  }
+  </style>
