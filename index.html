@@ -281,6 +281,18 @@
     <br>
     PeRFlow trains piecewise-linear flow models for fast sampling. These models can be initilized from pretrained diffusion models, such as Stable Diffusion (SD). The obtained weights of PeRFlow serve as a general speedup module which works compatibly with various finetuned stylized SD models as well as SD-based generation/editing pipelines. Specifically, \(\Delta W\) are computed by the flow model's weights minus the pretrained ones. One can fuse the PeFlow-\(\Delta W\) into various SD pipelines for (conditional) image generation/editing with just few-step inference.
 
+
+    <br><br><br>
+    <h2 class="title is-4">Real-time T2I generation</h2>
+    A video demo for 4-step T2I generation:
+    
+    <div class="columns is-multiline is-mobile is-centered">
+      <video controls width="320" height="auto">
+        <source src="assets/perflow_t2i.mp4" type="video/mp4">
+      </video>
+    </div>
+
+
     <br><br><br>
     <center><h2 class="title is-3">Compatibility to SD pipelines</h2></center>
     <br>
@@ -291,17 +303,14 @@
     <br><br>
     <div class="columns is-multiline is-mobile is-centered">
       <div class="column is-4">
-        <!-- <center>PeRFlow 4--8--16 step</center> -->
         <img src="assets/multiview/dog_normal.png" alt="Description of the image">
         <img src="assets/multiview/dog_rgb.png" alt="Description of the image">
       </div>
       <div class="column is-4">
-        <!-- <center>PeRFlow 4--8--16 step</center> -->
         <img src="assets/multiview/bird_normal.png" alt="Description of the image">
         <img src="assets/multiview/bird_rgb.png" alt="Description of the image">
       </div>
       <div class="column is-4">
-        <!-- <center>PeRFlow 4--8--16 step</center> -->
         <img src="assets/multiview/car_normal.png" alt="Description of the image">
         <img src="assets/multiview/car_rgb.png" alt="Description of the image">
       </div>
@@ -309,9 +318,9 @@
 
     <br><br>
     A real-time video demo:
-    <br><br>
+    <br>
     <div class="columns is-multiline is-mobile is-centered">
-      <video autoplay loop muted width="856" height="400">
+      <video controls width="856" height="400">
         <source src="assets/multiview/perflow_wonder3d.mp4" type="video/mp4">
       </video>
     </div>
