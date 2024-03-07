@@ -279,7 +279,7 @@
     <h2 class="title is-2, columns is-centered">Features</h2>
     <hr>
     <br>
-    PeRFlow trains piecewise-linear flow models for fast sampling. These models can be initialized from pretrained diffusion models, such as Stable Diffusion (SD). The obtained weights of PeRFlow serve as a general speedup module which works compatibly with various finetuned stylized SD models as well as SD-based generation/editing pipelines. Specifically, \(\Delta W\) are computed by the flow model's weights minus the pretrained ones. One can fuse the PeRFlow-\(\Delta W\) into various SD pipelines for (conditional) image generation/editing with just few-step inference.
+    PeRFlow trains piecewise-linear rectified flow models for fast sampling. These models can be initialized from pretrained diffusion models, such as Stable Diffusion (SD). The obtained weights of PeRFlow serve as a general accelerator module which is compatible with various fine-tuned stylized SD models as well as SD-based generation/editing pipelines. Specifically, \(\Delta W\) are computed by the PeRFlow's weights minus the pretrained SD. One can fuse the PeRFlow-\(\Delta W\) into various SD pipelines for (conditional) image generation/editing to enable high-quality few-step inference.
 
 
     <br><br><br>
@@ -530,7 +530,7 @@
     <!-- <center><h2 class="title is-5">Better compatibility with finetuned SD models</h2></center> -->
     <h2 class="title is-4">Better compatibility with finetuned SD models</h2>
     <br>
-    PeRFlow shows a smaller gap to the oracle in terms of image quality, e.g., color-style and layout. It preserves the aesthetic effect of finetuned stylized models (vivid, proper brightness and contrast). PeRFlow also supports CFG and negative prompts. One can use the well-craft negative and positive prompts provided in various finetued stylized models to generate astonishing images.
+    PeRFlow shows a smaller gap to the oracle in terms of image quality, e.g., color-style and layout. It preserves the aesthetic effect of finetuned stylized models (vividness, proper brightness and contrast). PeRFlow also supports CFG and negative prompts. One can use the well-craft negative and positive prompts provided in various finetued stylized models to generate astonishing images.
 
     <br><br>
     <div class="columns is-multiline is-mobile is-centered">
@@ -592,8 +592,8 @@
 
 
     <br><br>
-    <h2 class="title is-4">Consistency among results by various inference steps</h2>
-    Increasing sampling steps will improve the image quality. Given a random seed, PeRFlow generates results sharing the similar appearance, so that users can preview many candidates via 4-step inference, then choose few ones of interest for final high-quality generation. In contrast, the results of LCM via different inference steps may look very different.
+    <h2 class="title is-4">Consistency when inference with different number of steps</h2>
+    As PeRFlow is essentially an ODE, increasing sampling steps will monotonically improve the image quality. Given a random seed, PeRFlow generates results sharing the similar appearance, so that users can preview many candidates via 4-step inference, then choose few ones of interest for final high-quality generation. In contrast, the results of LCM via different inference steps may look very different.
     <br><br>
     <div class="columns is-multiline is-mobile is-centered">
       <div class="column is-5">
@@ -985,3 +985,6 @@ setInterval(() => {
       border-bottom-right-radius: 10px; /* Same radius as .rounded-table border-radius */
   }
   </style>
+
+
+
