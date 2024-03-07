@@ -279,14 +279,14 @@
     <h2 class="title is-2, columns is-centered">Features</h2>
     <hr>
     <br>
-    PeRFlow trains piecewise-linear flow models for fast sampling. These models can be initilized from pretrained diffusion models, such as Stable Diffusion (SD). The obtained weights of PeRFlow serve as a general speedup module which works compatibly with various finetuned stylized SD models as well as SD-based generation/editing pipelines. Specifically, \(\Delta W\) are computed by the flow model's weights minus the pretrained ones. One can fuse the PeFlow-\(\Delta W\) into various SD pipelines for (conditional) image generation/editing with just few-step inference.
+    PeRFlow trains piecewise-linear flow models for fast sampling. These models can be initialized from pretrained diffusion models, such as Stable Diffusion (SD). The obtained weights of PeRFlow serve as a general speedup module which works compatibly with various finetuned stylized SD models as well as SD-based generation/editing pipelines. Specifically, \(\Delta W\) are computed by the flow model's weights minus the pretrained ones. One can fuse the PeRFlow-\(\Delta W\) into various SD pipelines for (conditional) image generation/editing with just few-step inference.
 
 
     <br><br><br>
     <h2 class="title is-4">Video demos for real-time generation</h2>
     <div class="columns is-multiline is-mobile is-centered">
       <div class="column is-3">
-        <center>4-step T2I generation</center>
+        <center>fast T2I generation</center>
         <video controls width="auto" height="400">
           <source src="assets/perflow_t2i.mp4" type="video/mp4">
         </video>
@@ -294,7 +294,7 @@
       <div class="column is-1">
       </div>
       <div class="column is-8">
-        <center>1-step multiview generation</center>
+        <center>instant multiview generation</center>
       <video controls width="auto" height="auto">
         <source src="assets/multiview/perflow_wonder3d.mp4" type="video/mp4">
       </video>
@@ -575,7 +575,7 @@
       </div>
     </div>
     <i style="font-size:12px;">
-      <li>A dog palying in the garden, snow. </li>
+      <li>A dog playing in the garden, snow. </li>
       <li>A boy with bright blue eyes, looking at the viewer with a toothy smile.</li>
       <li>A man with brown skin and a beard, looking at the viewer with dark eyes. </li>
       <li>A young woman with a crown and a masterpiece necklace, at a royal event.</li>
@@ -605,7 +605,7 @@
     <hr>
     <center><h2 class="title is-2">Method</h2></center>
     <br><br>
-    Rectified Flows proposes to contruct flow-based generative models via linear interpolation, and the trajectories of the learned flow can be straightened with a special operation called reflow. 
+    Rectified Flows proposes to construct flow-based generative models via linear interpolation, and the trajectories of the learned flow can be straightened with a special operation called reflow. 
     However, the reflow procedure requires generating a synthetic dataset by simulating the entire pre-trained probability flow, which consumes a huge amount of storage and time, making it unfavorable for training large-scale foundation models. 
     To address this limitation, we propose piecewise rectified flow. By dividing the pre-trained probability flows into multiple segments and straightening the intermediate probability flows inside each segment with reflow, we yield a piecewise linear probability flow that can be sampled within very few steps.
     This divide-and-conquer strategy successfully avoids the cumbersome simulation of the whole ODE trajectory, thereby allowing us to perform the piecewise reflow operation online in training.
